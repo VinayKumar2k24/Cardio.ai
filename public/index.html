@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CardioAI - Login & Signup</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+    </style>
+</head>
+
+<body class="bg-[#050505] text-white min-h-screen flex items-center justify-center p-4">
+    <div class="max-w-md w-full glass-panel p-8 rounded-3xl shadow-2xl">
+        <div class="flex flex-col items-center mb-10">
+            <div
+                class="w-16 h-16 bg-[#00ff88] rounded-2xl flex items-center justify-center mb-4 shadow-[0_0_20px_rgba(0,255,136,0.4)]">
+                <svg class="w-10 h-10 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z">
+                    </path>
+                </svg>
+            </div>
+            <h1 class="text-3xl font-bold tracking-tight">Cardio<span class="text-[#00ff88]">AI</span></h1>
+            <p class="text-gray-400 mt-2" id="form-subtitle">Predicting the future of your heart</p>
+        </div>
+
+        <!-- Login Form -->
+        <form id="login-form" class="space-y-6">
+            <div class="relative">
+                <input type="text" id="login-username" placeholder="Username" required
+                    class="w-full bg-[#111] border border-gray-800 rounded-xl px-4 py-3 focus:outline-none focus:border-[#00ff88] transition-all">
+            </div>
+            <div class="relative">
+                <input type="password" id="login-password" placeholder="Password" required
+                    class="w-full bg-[#111] border border-gray-800 rounded-xl px-4 py-3 focus:outline-none focus:border-[#00ff88] transition-all">
+                <div class="flex justify-between items-center text-sm mt-2 px-1">
+                    <a href="#" onclick="showForgotForm()" class="text-[#00ff88] hover:underline">Forgot password?</a>
+                </div>
+            </div>
+            <button type="submit"
+                class="w-full bg-[#00ff88] text-black font-bold py-3 rounded-xl hover:bg-[#00dd77] transition-all transform hover:scale-[1.02] active:scale-[0.98] shadow-lg">
+                Sign In
+            </button>
+            <p class="text-center text-gray-400 text-sm">
+                Don't have an account? <a href="#" onclick="toggleForms()" class="text-[#00ff88] hover:underline">Sign
+                    up</a>
+            </p>
+        </form>
+
+        <!-- Forgot Password Form (Step 1: Email) -->
+        <form id="forgot-form" class="space-y-6 hidden">
+            <div class="relative">
+                <input type="email" id="forgot-email" placeholder="Enter your registered email" required
+                    class="w-full bg-[#111] border border-gray-800 rounded-xl px-4 py-3 focus:outline-none focus:border-[#00ff88] transition-all">
+            </div>
+            <button type="submit"
+                class="w-full bg-[#00ff88] text-black font-bold py-3 rounded-xl hover:bg-[#00dd77] transition-all">
+                Send OTP
+            </button>
+            <p class="text-center text-gray-400 text-sm">
+                <a href="#" onclick="showLoginForm()" class="text-[#00ff88] hover:underline">Back to Login</a>
+            </p>
+        </form>
+
+        <!-- OTP Verification Form (Step 2: OTP) -->
+        <form id="verify-form" class="space-y-6 hidden">
+            <div class="relative">
+                <input type="text" id="verify-otp" placeholder="Enter 6-digit OTP" required maxlength="6"
+                    class="w-full bg-[#111] border border-gray-800 rounded-xl px-4 py-3 focus:outline-none focus:border-[#00ff88] transition-all text-center tracking-widest text-xl">
+            </div>
+            <button type="submit"
+                class="w-full bg-[#00ff88] text-black font-bold py-3 rounded-xl hover:bg-[#00dd77] transition-all">
+                Verify OTP
+            </button>
+            <p class="text-center text-gray-400 text-sm">
+                <a href="#" onclick="showForgotForm()" class="text-[#00ff88] hover:underline">Resend OTP</a>
+            </p>
+        </form>
+
+        <!-- Reset Password Form (Step 3: New Password) -->
+        <form id="reset-form" class="space-y-6 hidden">
+            <div class="relative">
+                <input type="password" id="reset-new-password" placeholder="Enter New Strong Password" required
+                    pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$"
+                    title="Min 8 chars, Upper, Lower, Num, Special."
+                    class="w-full bg-[#111] border border-gray-800 rounded-xl px-4 py-3 focus:outline-none focus:border-[#00ff88] transition-all">
+            </div>
+            <button type="submit"
+                class="w-full bg-[#00ff88] text-black font-bold py-3 rounded-xl hover:bg-[#00dd77] transition-all">
+                Update Password
+            </button>
+        </form>
+
+        <!-- Signup Form (Hidden by default) -->
+        <form id="signup-form" class="space-y-6 hidden">
+            <div class="relative">
+                <input type="text" id="signup-username" placeholder="Username (alphabets only)" required
+                    pattern="[a-zA-Z]+" title="Username must contain only alphabets (A-Z, a-z)."
+                    class="w-full bg-[#111] border border-gray-800 rounded-xl px-4 py-3 focus:outline-none focus:border-[#00ff88] transition-all">
+            </div>
+            <div class="relative">
+                <input type="email" id="signup-email" placeholder="Email Address" required
+                    class="w-full bg-[#111] border border-gray-800 rounded-xl px-4 py-3 focus:outline-none focus:border-[#00ff88] transition-all">
+            </div>
+            <div class="relative">
+                <input type="password" id="signup-password" placeholder="Password (Strong)" required
+                    pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$"
+                    title="Must be at least 8 characters, with uppercase, lowercase, number, and a special character."
+                    class="w-full bg-[#111] border border-gray-800 rounded-xl px-4 py-3 focus:outline-none focus:border-[#00ff88] transition-all">
+                <p class="text-[10px] text-gray-500 mt-1 px-1">Must include: 8+ chars, Upper/Lower, 0-9, & Symbol</p>
+            </div>
+            <button type="submit"
+                class="w-full bg-[#00ff88] text-black font-bold py-3 rounded-xl hover:bg-[#00dd77] transition-all transform hover:scale-[1.02] active:scale-[0.98] shadow-lg">
+                Create Account
+            </button>
+            <p class="text-center text-gray-400 text-sm">
+                Already have an account? <a href="#" onclick="toggleForms()" class="text-[#00ff88] hover:underline">Log
+                    in</a>
+            </p>
+        </form>
+    </div>
+
+    <script>
+        function showForgotForm() {
+            document.getElementById('login-form').classList.add('hidden');
+            document.getElementById('signup-form').classList.add('hidden');
+            document.getElementById('forgot-form').classList.remove('hidden');
+            document.getElementById('verify-form').classList.add('hidden');
+            document.getElementById('reset-form').classList.add('hidden');
+            document.getElementById('form-subtitle').innerText = 'Recover your account access';
+        }
+
+        function showLoginForm() {
+            document.getElementById('login-form').classList.remove('hidden');
+            document.getElementById('signup-form').classList.add('hidden');
+            document.getElementById('forgot-form').classList.add('hidden');
+            document.getElementById('verify-form').classList.add('hidden');
+            document.getElementById('reset-form').classList.add('hidden');
+            document.getElementById('form-subtitle').innerText = 'Predicting the future of your heart';
+        }
+
+        function toggleForms() {
+            const loginForm = document.getElementById('login-form');
+            const signupForm = document.getElementById('signup-form');
+            const subtitle = document.getElementById('form-subtitle');
+
+            document.getElementById('forgot-form').classList.add('hidden');
+            document.getElementById('verify-form').classList.add('hidden');
+            document.getElementById('reset-form').classList.add('hidden');
+
+            if (loginForm.classList.contains('hidden')) {
+                loginForm.classList.remove('hidden');
+                signupForm.classList.add('hidden');
+                subtitle.innerText = 'Predicting the future of your heart';
+            } else {
+                loginForm.classList.add('hidden');
+                signupForm.classList.remove('hidden');
+                subtitle.innerText = 'Join our health community';
+            }
+        }
+
+        // --- PASSWORD RECOVERY FLOW ---
+
+        // Step 1: Request OTP
+        document.getElementById('forgot-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('forgot-email').value;
+            const btn = e.target.querySelector('button');
+            const originalText = btn.innerText;
+            btn.innerText = 'Sending OTP...';
+            btn.disabled = true;
+
+            try {
+                const response = await fetch('/api/forgot-password', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email })
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    alert(data.message);
+                    document.getElementById('forgot-form').classList.add('hidden');
+                    document.getElementById('verify-form').classList.remove('hidden');
+                    document.getElementById('form-subtitle').innerText = 'Enter the code sent to your email';
+                } else {
+                    alert(data.error);
+                }
+            } catch (error) {
+                alert('Connection error');
+            } finally {
+                btn.innerText = originalText;
+                btn.disabled = false;
+            }
+        });
+
+        // Step 2: Verify OTP
+        document.getElementById('verify-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('forgot-email').value;
+            const otp = document.getElementById('verify-otp').value;
+            const btn = e.target.querySelector('button');
+            btn.innerText = 'Verifying...';
+            btn.disabled = true;
+
+            try {
+                const response = await fetch('/api/verify-otp', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, otp })
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    alert(data.message);
+                    document.getElementById('verify-form').classList.add('hidden');
+                    document.getElementById('reset-form').classList.remove('hidden');
+                    document.getElementById('form-subtitle').innerText = 'Choose a new strong password';
+                } else {
+                    alert(data.error);
+                }
+            } catch (error) {
+                alert('Connection error');
+            } finally {
+                btn.innerText = 'Verify OTP';
+                btn.disabled = false;
+            }
+        });
+
+        // Step 3: Final Reset
+        document.getElementById('reset-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('forgot-email').value;
+            const otp = document.getElementById('verify-otp').value;
+            const newPassword = document.getElementById('reset-new-password').value;
+            const btn = e.target.querySelector('button');
+            btn.innerText = 'Updating...';
+            btn.disabled = true;
+
+            try {
+                const response = await fetch('/api/reset-password', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, otp, newPassword })
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    alert(data.message);
+                    showLoginForm();
+                } else {
+                    alert(data.error);
+                }
+            } catch (error) {
+                alert('Connection error');
+            } finally {
+                btn.innerText = 'Update Password';
+                btn.disabled = false;
+            }
+        });
+
+        // Handle Signup
+        document.getElementById('signup-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('signup-username').value;
+            const email = document.getElementById('signup-email').value;
+            const password = document.getElementById('signup-password').value;
+
+            try {
+                const response = await fetch('/api/signup', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, email, password })
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    alert('Signup successful! Please login.');
+                    toggleForms();
+                } else {
+                    alert(data.error);
+                }
+            } catch (error) {
+                alert('Connection error');
+            }
+        });
+
+        // Handle Login
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('login-username').value;
+            const password = document.getElementById('login-password').value;
+
+            try {
+                const response = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    localStorage.setItem('token', data.token);
+                    localStorage.setItem('username', data.username);
+                    window.location.href = '/dashboard.html';
+                } else {
+                    alert(data.error);
+                }
+            } catch (error) {
+                alert('Connection error');
+            }
+        });
+    </script>
+</body>
+
+</html>

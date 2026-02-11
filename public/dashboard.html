@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CardioAI - Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .bg-custom-black {
+            background-color: #050505;
+        }
+
+        .text-custom-green {
+            color: #00ff88;
+        }
+
+        .border-custom-green {
+            border-color: #00ff88;
+        }
+
+        .bg-custom-green {
+            background-color: #00ff88;
+        }
+    </style>
+</head>
+
+<body class="bg-custom-black text-white min-h-screen">
+    <!-- Navbar -->
+    <nav
+        class="flex items-center justify-between px-8 py-4 border-b border-gray-800 sticky top-0 bg-custom-black bg-opacity-80 backdrop-blur-md z-50">
+        <!-- Logo -->
+        <div class="flex items-center space-x-2">
+            <div
+                class="w-10 h-10 bg-custom-green rounded-lg flex items-center justify-center shadow-[0_0_15px_rgba(0,255,136,0.3)]">
+                <svg class="w-6 h-6 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z">
+                    </path>
+                </svg>
+            </div>
+            <span class="text-2xl font-bold tracking-tight">Cardio<span class="text-custom-green">AI</span></span>
+        </div>
+
+        <!-- Desktop Navigation -->
+        <div class="hidden md:flex items-center space-x-8">
+            <a href="#features" class="text-gray-400 hover:text-custom-green transition-colors"
+                data-i18n="nav_features">Features</a>
+            <a href="#about-us" class="text-gray-400 hover:text-custom-green transition-colors"
+                data-i18n="nav_about">About Us</a>
+            <a href="predict.html"
+                class="bg-custom-green text-black font-bold px-6 py-2 rounded-full hover:bg-[#00dd77] transition-all transform hover:scale-105 flex items-center justify-center"
+                data-i18n="nav_get_started">
+                Get Started
+            </a>
+        </div>
+
+        <!-- Profile Dropdown -->
+        <div class="relative group">
+            <button
+                class="flex items-center space-x-3 bg-[#111] px-4 py-2 rounded-full border border-gray-800 hover:border-custom-green transition-all">
+                <div class="w-8 h-8 rounded-full bg-gray-700 flex items-center justify-center">
+                    <span id="user-initial" class="text-xs font-bold uppercase">U</span>
+                </div>
+                <span id="display-username" class="text-sm font-medium">Username</span>
+                <svg class="w-4 h-4 text-gray-400 group-hover:rotate-180 transition-transform" fill="none"
+                    stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                </svg>
+            </button>
+
+            <!-- Dropdown Menu -->
+            <div
+                class="absolute right-0 mt-2 w-56 bg-[#0a0a0a] border border-gray-800 rounded-2xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 overflow-hidden">
+                <div class="p-2 space-y-1">
+                    <button onclick="openProfileModal()"
+                        class="flex items-center space-x-3 w-full px-4 py-3 rounded-xl hover:bg-white hover:bg-opacity-5 transition-colors text-left">
+                        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                        </svg>
+                        <span data-i18n="drop_account">My Account</span>
+                    </button>
+                    <div class="h-px bg-gray-800 mx-3 my-1"></div>
+                    <!-- Language Selection -->
+                    <div class="px-4 py-2 text-[10px] uppercase tracking-wider text-gray-500 font-bold"
+                        data-i18n="drop_lang">Language</div>
+                    <div class="flex px-2 pb-2 justify-between">
+                        <button onclick="changeLanguage('en')"
+                            class="px-3 py-1 text-xs rounded-md bg-[#111] border border-gray-800 hover:border-custom-green transition-colors">EN</button>
+                        <button onclick="changeLanguage('hi')"
+                            class="px-3 py-1 text-xs rounded-md bg-[#111] border border-gray-800 hover:border-custom-green transition-colors">HI</button>
+                        <button onclick="changeLanguage('kn')"
+                            class="px-3 py-1 text-xs rounded-md bg-[#111] border border-gray-800 hover:border-custom-green transition-colors">KN</button>
+                    </div>
+                    <div class="h-px bg-gray-800 mx-3 my-1"></div>
+                    <button
+                        class="flex items-center space-x-3 w-full px-4 py-3 rounded-xl hover:bg-white hover:bg-opacity-5 transition-colors text-left">
+                        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path
+                                d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z">
+                            </path>
+                            <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        </svg>
+                        <span data-i18n="drop_settings">Settings</span>
+                    </button>
+                    <button onclick="logout()"
+                        class="flex items-center space-x-3 w-full px-4 py-3 rounded-xl hover:bg-red-500 hover:bg-opacity-10 transition-colors text-left text-red-500">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path
+                                d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1">
+                            </path>
+                        </svg>
+                        <span data-i18n="logout">Logout</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Profile Modal Overlay -->
+    <div id="profile-modal"
+        class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center p-4 z-[100] hidden">
+        <div
+            class="max-w-md w-full bg-[#0a0a0a] border border-gray-800 rounded-3xl p-8 shadow-2xl relative overflow-hidden">
+            <!-- Close Button -->
+            <button onclick="closeProfileModal()" class="absolute top-4 right-4 text-gray-500 hover:text-white">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                    </path>
+                </svg>
+            </button>
+
+            <!-- Profile View Content -->
+            <div id="view-mode">
+                <div class="flex flex-col items-center mb-8">
+                    <div
+                        class="w-20 h-20 rounded-full bg-custom-green flex items-center justify-center mb-4 text-black text-2xl font-bold uppercase shadow-[0_0_20px_rgba(0,255,136,0.3)]">
+                        <span id="modal-initial">U</span>
+                    </div>
+                    <h2 class="text-2xl font-bold" id="modal-display-name">Username</h2>
+                    <p class="text-gray-500 text-sm">Pro Patient Account</p>
+                </div>
+
+                <div class="space-y-4 mb-8">
+                    <div class="flex justify-between py-3 border-b border-gray-800">
+                        <span class="text-gray-500 text-sm">Username</span>
+                        <span id="modal-username" class="font-medium"></span>
+                    </div>
+                    <div class="flex justify-between py-3 border-b border-gray-800">
+                        <span class="text-gray-500 text-sm">Email Address</span>
+                        <span id="modal-email" class="font-medium text-xs"></span>
+                    </div>
+                </div>
+
+                <button onclick="toggleEditMode(true)"
+                    class="w-full bg-[#111] border border-gray-800 py-3 rounded-xl hover:border-custom-green transition-all font-bold text-custom-green">
+                    Edit Profile Details
+                </button>
+            </div>
+
+            <!-- Edit Mode Content (Hidden) -->
+            <div id="edit-mode" class="hidden">
+                <h2 class="text-xl font-bold mb-6">Update Profile</h2>
+                <form id="update-profile-form" class="space-y-5">
+                    <div>
+                        <label class="block text-gray-500 text-xs mb-1 ml-1 uppercase font-bold tracking-wider">New
+                            Username</label>
+                        <input type="text" id="edit-username" placeholder="Alphabets only" pattern="[a-zA-Z]+"
+                            title="Username (A-Z, a-z)"
+                            class="w-full bg-[#111] border border-gray-800 rounded-xl px-4 py-3 focus:border-custom-green outline-none transition-all">
+                    </div>
+                    <div>
+                        <label class="block text-gray-500 text-xs mb-1 ml-1 uppercase font-bold tracking-wider">New
+                            Email</label>
+                        <input type="email" id="edit-email" placeholder="user@example.com"
+                            class="w-full bg-[#111] border border-gray-800 rounded-xl px-4 py-3 focus:border-custom-green outline-none transition-all">
+                    </div>
+                    <div>
+                        <label class="block text-gray-500 text-xs mb-1 ml-1 uppercase font-bold tracking-wider">New
+                            Password</label>
+                        <input type="password" id="edit-password" placeholder="Leave empty to keep current"
+                            pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$"
+                            title="Min 8 chars, 1 uppercase, 1 lowercase, 1 number, 1 special char."
+                            class="w-full bg-[#111] border border-gray-800 rounded-xl px-4 py-3 focus:border-custom-green outline-none transition-all">
+                    </div>
+                    <div class="pt-4 space-y-3">
+                        <button type="submit"
+                            class="w-full bg-custom-green text-black font-bold py-3 rounded-xl hover:bg-[#00dd77] transition-all shadow-lg">
+                            Save Changes
+                        </button>
+                        <button type="button" onclick="toggleEditMode(false)"
+                            class="w-full text-gray-500 py-2 hover:text-white transition-colors text-sm">
+                            Discard Changes
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-8 py-12">
+        <!-- Hero Section -->
+        <section class="mb-20">
+            <h1 class="text-6xl font-black mb-6 leading-tight" data-i18n="hero_title">
+                Smart Cardiovascular <br> <span class="text-custom-green">Health Monitoring.</span>
+            </h1>
+            <p class="text-gray-400 text-xl max-w-2xl mb-10" data-i18n="hero_desc">
+                Using advanced AI models to predict potential heart risks based on your clinical data. Your heart
+                health, supervised by intelligence.
+            </p>
+            <!-- Premium Services Grid -->
+            <section id="features" class="mb-24">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <!-- Feature 1: AI Analysis -->
+                    <div
+                        class="group relative overflow-hidden rounded-[2.5rem] bg-[#0a0a0a] border border-gray-800 hover:border-custom-green transition-all duration-500">
+                        <img src="https://images.unsplash.com/photo-1631815589968-fdb09a223b1e?q=80&w=2070&auto=format&fit=crop"
+                            alt="Heart Analysis"
+                            class="w-full h-48 object-cover opacity-50 group-hover:opacity-70 transition-all duration-500">
+                        <div class="p-8">
+                            <div
+                                class="w-12 h-12 bg-custom-green bg-opacity-10 rounded-xl flex items-center justify-center mb-6 text-custom-green">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path
+                                        d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z">
+                                    </path>
+                                </svg>
+                            </div>
+                            <h3 class="text-xl font-bold mb-3" data-i18n="feat_1_title">AI Discovery</h3>
+                            <p class="text-gray-500 text-sm leading-relaxed" data-i18n="feat_1_desc">Neural network
+                                analysis that detects 40+
+                                heart conditions from simple clinical patterns.</p>
+                        </div>
+                    </div>
+
+                    <!-- Feature 2: Monitoring -->
+                    <div
+                        class="group relative overflow-hidden rounded-[2.5rem] bg-[#0a0a0a] border border-gray-800 hover:border-custom-green transition-all duration-500">
+                        <img src="https://images.unsplash.com/photo-1504813184591-01572f98c85f?q=80&w=2071&auto=format&fit=crop"
+                            alt="Data Analytics"
+                            class="w-full h-48 object-cover opacity-50 group-hover:opacity-80 transition-all duration-500">
+                        <div class="p-8">
+                            <div
+                                class="w-12 h-12 bg-white bg-opacity-5 rounded-xl flex items-center justify-center mb-6 text-gray-400">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path
+                                        d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
+                                    </path>
+                                </svg>
+                            </div>
+                            <h3 class="text-xl font-bold mb-3" data-i18n="feat_2_title">Predictive Flow</h3>
+                            <p class="text-gray-500 text-sm leading-relaxed" data-i18n="feat_2_desc">Advanced blood
+                                dynamics simulation
+                                providing 6-month prediction horizons for vascular health.</p>
+                        </div>
+                    </div>
+
+                    <!-- Feature 3: Reports -->
+                    <div
+                        class="group relative overflow-hidden rounded-[2.5rem] bg-[#0a0a0a] border border-gray-800 hover:border-custom-green transition-all duration-500">
+                        <img src="https://images.unsplash.com/photo-1551076805-e1869033e561?q=80&w=2070&auto=format&fit=crop"
+                            alt="Expert Interface"
+                            class="w-full h-48 object-cover opacity-40 group-hover:opacity-60 transition-all duration-500">
+                        <div class="p-8">
+                            <div
+                                class="w-12 h-12 bg-custom-green bg-opacity-10 rounded-xl flex items-center justify-center mb-6 text-custom-green">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path
+                                        d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z">
+                                    </path>
+                                </svg>
+                            </div>
+                            <h3 class="text-xl font-bold mb-3" data-i18n="feat_3_title">Enterprise Security</h3>
+                            <p class="text-gray-500 text-sm leading-relaxed" data-i18n="feat_3_desc">Personal health
+                                data encrypted with
+                                biometric-grade standards, accessible only by you.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Dynamic Content Area (Hidden blank space filled) -->
+            <div id="dynamic-content" class="mb-32">
+                <!-- New Prediction Prompt -->
+                <div id="welcome-view"
+                    class="relative overflow-hidden bg-[#0a0a0a] border border-gray-800 rounded-[3rem] p-12 md:p-20 group">
+                    <!-- Background visual fade -->
+                    <div
+                        class="absolute inset-0 bg-gradient-to-r from-custom-green/5 to-transparent pointer-events-none">
+                    </div>
+
+                    <div class="relative z-10 flex flex-col md:flex-row items-center gap-16">
+                        <div class="flex-1 text-center md:text-left">
+                            <span
+                                class="inline-block px-4 py-1 bg-custom-green/10 text-custom-green text-xs font-bold rounded-full mb-6 tracking-widest uppercase"
+                                data-i18n="journey_badge">Live
+                                Analysis</span>
+                            <h2 class="text-4xl md:text-5xl font-black mb-6 leading-tight" data-i18n="journey_title">
+                                Begin Your <span class="text-custom-green">AI Journey.</span></h2>
+                            <p class="text-gray-400 text-lg mb-10 max-w-xl" data-i18n="journey_desc">Our models are
+                                primed and ready. Connect
+                                your clinical metrics to generate your proprietary heart health score in seconds.</p>
+                            <a href="predict.html"
+                                class="bg-custom-green text-black font-extrabold px-12 py-5 rounded-full hover:bg-[#00dd77] transition-all transform hover:scale-105 shadow-[0_0_25px_rgba(0,255,136,0.3)] inline-block text-center"
+                                data-i18n="journey_btn">
+                                Launch Prediction Engine
+                            </a>
+                        </div>
+
+                        <div class="flex-1 w-full flex justify-center">
+                            <div
+                                class="w-full max-w-sm aspect-square bg-gradient-to-br from-[#111] to-[#050505] rounded-[2rem] border border-gray-800 p-8 flex items-center justify-center relative overflow-hidden group-hover:border-custom-green/30 transition-all duration-700">
+                                <div class="absolute inset-0 opacity-20">
+                                    <svg class="w-full h-full text-custom-green" viewBox="0 0 100 100">
+                                        <circle cx="50" cy="50" r="40" stroke="currentColor" fill="none"
+                                            stroke-width="0.5" stroke-dasharray="2 2" />
+                                        <circle cx="50" cy="50" r="30" stroke="currentColor" fill="none"
+                                            stroke-width="0.2" />
+                                    </svg>
+                                </div>
+                                <svg class="w-32 h-32 text-custom-green drop-shadow-[0_0_15px_rgba(0,255,136,0.5)] animate-pulse"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                        d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z">
+                                    </path>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- About Us Section -->
+            <section id="about-us" class="mt-32 mb-20">
+                <div class="flex flex-col md:flex-row gap-16 items-center">
+                    <div class="flex-1 space-y-8">
+                        <span class="text-custom-green font-bold tracking-[0.3em] uppercase text-xs"
+                            data-i18n="about_mission">The Mission</span>
+                        <h2 class="text-4xl md:text-5xl font-black leading-tight" data-i18n="about_title">Pioneering the
+                            Era of <br>Precision Cardiology.</h2>
+                        <p class="text-gray-400 text-lg leading-relaxed" data-i18n="about_desc">
+                            At CardioAI, we believe that the heartbeat of the future is digital. By fusing clinical
+                            expertise with deep neural networks, we're not just predicting risks—we're creating a world
+                            where heart failure is a preventable relic of the past.
+                        </p>
+                        <div class="grid grid-cols-2 gap-6 pt-4">
+                            <div class="border-l-2 border-custom-green pl-6 py-2">
+                                <div class="text-2xl font-bold">100%</div>
+                                <div class="text-gray-500 text-xs uppercase tracking-tighter" data-i18n="about_privacy">
+                                    Data Privacy</div>
+                            </div>
+                            <div class="border-l-2 border-gray-800 pl-6 py-2">
+                                <div class="text-2xl font-bold">24/7</div>
+                                <div class="text-gray-500 text-xs uppercase tracking-tighter"
+                                    data-i18n="about_supervision">AI Supervision</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex-1 w-full group relative">
+                        <div
+                            class="absolute -inset-4 bg-custom-green/20 blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-700">
+                        </div>
+                        <img src="https://images.unsplash.com/photo-1579684385127-1ef15d508118?q=80&w=2080&auto=format&fit=crop"
+                            alt="Mission Visualization"
+                            class="relative rounded-[2.5rem] w-full aspect-[4/3] object-cover border border-gray-800 shadow-2xl transition-transform duration-700 group-hover:scale-[1.02]">
+                    </div>
+                </div>
+            </section>
+    </main>
+
+    <script>
+        // Check Authentication
+        const token = localStorage.getItem('token');
+        let username = localStorage.getItem('username');
+        if (!token) window.location.href = '/index.html';
+
+        // Initial UI Setup
+        function updateUI(newUsername) {
+            if (newUsername) {
+                username = newUsername;
+                localStorage.setItem('username', username);
+            }
+            document.getElementById('display-username').innerText = username;
+            document.getElementById('user-initial').innerText = username.charAt(0);
+
+            // Modal elements
+            if (document.getElementById('modal-initial')) {
+                document.getElementById('modal-initial').innerText = username.charAt(0);
+                document.getElementById('modal-display-name').innerText = username;
+                document.getElementById('modal-username').innerText = username;
+            }
+        }
+        updateUI();
+
+        function logout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('username');
+            window.location.href = '/index.html';
+        }
+
+        // Modal Logic
+        function openProfileModal() {
+            document.getElementById('profile-modal').classList.remove('hidden');
+            fetchProfile();
+        }
+
+        function closeProfileModal() {
+            document.getElementById('profile-modal').classList.add('hidden');
+            toggleEditMode(false);
+        }
+
+        function toggleEditMode(isEdit) {
+            document.getElementById('view-mode').classList.toggle('hidden', isEdit);
+            document.getElementById('edit-mode').classList.toggle('hidden', !isEdit);
+
+            if (isEdit) {
+                document.getElementById('edit-username').value = username;
+                document.getElementById('edit-email').value = document.getElementById('modal-email').innerText;
+                document.getElementById('edit-password').value = '';
+            }
+        }
+
+        // API Calls
+        async function fetchProfile() {
+            try {
+                const response = await fetch('/api/profile', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    document.getElementById('modal-email').innerText = data.email;
+                }
+            } catch (err) {
+                console.error('Failed to fetch profile', err);
+            }
+        }
+
+        document.getElementById('update-profile-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = e.target.querySelector('button[type="submit"]');
+            const originalText = btn.innerText;
+            btn.innerText = 'Saving...';
+            btn.disabled = true;
+
+            const updatedData = {
+                username: document.getElementById('edit-username').value,
+                email: document.getElementById('edit-email').value
+            };
+
+            const password = document.getElementById('edit-password').value;
+            if (password) updatedData.password = password;
+
+            try {
+                const response = await fetch('/api/profile/update', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(updatedData)
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    alert('Profile updated successfully!');
+                    updateUI(data.username);
+                    document.getElementById('modal-email').innerText = updatedData.email;
+                    toggleEditMode(false);
+                } else {
+                    alert(data.error || 'Update failed');
+                }
+            } catch (err) {
+                alert('Server error. Please try again.');
+            } finally {
+                btn.innerText = originalText;
+                btn.disabled = false;
+            }
+        });
+
+        // Language Switcher Logic
+        const translations = {
+            en: {
+                nav_features: "Features",
+                nav_about: "About Us",
+                nav_get_started: "Get Started",
+                drop_account: "My Account",
+                drop_lang: "Language",
+                drop_settings: "Settings",
+                logout: "Logout",
+                hero_title: "Smart Cardiovascular Health Monitoring.",
+                hero_desc: "Using advanced AI models to predict potential heart risks based on your clinical data.",
+                feat_1_title: "AI Discovery",
+                feat_1_desc: "Neural network analysis that detects 40+ heart conditions from simple clinical patterns.",
+                feat_2_title: "Predictive Flow",
+                feat_2_desc: "Advanced blood dynamics simulation providing 6-month prediction horizons for vascular health.",
+                feat_3_title: "Enterprise Security",
+                feat_3_desc: "Personal health data encrypted with biometric-grade standards, accessible only by you.",
+                journey_badge: "Live Analysis",
+                journey_title: "Begin Your AI Journey.",
+                journey_desc: "Our models are primed and ready. Connect your clinical metrics to generate your proprietary heart health score in seconds.",
+                journey_btn: "Launch Prediction Engine",
+                about_mission: "The Mission",
+                about_title: "Pioneering the Era of Precision Cardiology.",
+                about_desc: "At CardioAI, we believe that the heartbeat of the future is digital. By fusing clinical expertise with deep neural networks, we're not just predicting risks—we're creating a world where heart failure is a preventable relic of the past.",
+                about_privacy: "Data Privacy",
+                about_supervision: "AI Supervision"
+            },
+            hi: {
+                nav_features: "विशेषताएं",
+                nav_about: "हमारे बारे में",
+                nav_get_started: "शुरू करें",
+                drop_account: "मेरा खाता",
+                drop_lang: "भाषा",
+                drop_settings: "सेटिंग्स",
+                logout: "लॉग आउट",
+                hero_title: "स्मार्ट हृदय स्वास्थ्य निगरानी।",
+                hero_desc: "आपके क्लिनिकल डेटा के आधार पर संभावित हृदय जोखिमों की भविष्यवाणी करने के लिए उन्नत AI मॉडल का उपयोग करना।",
+                feat_1_title: "AI खोज",
+                feat_1_desc: "न्यूरल नेटवर्क विश्लेषण जो सरल नैदानिक पैटर्न से 40+ हृदय स्थितियों का पता लगाता है।",
+                feat_2_title: "भविष्य कहनेवाला प्रवाह",
+                feat_2_desc: "संवहनी स्वास्थ्य के लिए 6 महीने के पूर्वानुमान क्षितिज प्रदान करने वाला उन्नत रक्त गतििकी सिमुलेशन।",
+                feat_3_title: "एंटरप्राइज सुरक्षा",
+                feat_3_desc: "बायोमेट्रिक-ग्रेड मानकों के साथ एन्क्रिप्टेड व्यक्तिगत स्वास्थ्य डेटा, केवल आपके द्वारा सुलभ।",
+                journey_badge: "लाइव विश्लेषण",
+                journey_title: "अपनी AI यात्रा शुरू करें।",
+                journey_desc: "हमारे मॉडल तैयार हैं। सेकंडों में अपना मालिकाना हृदय स्वास्थ्य स्कोर उत्पन्न करने के लिए अपने नैदानिक मेट्रिक्स को कनेक्ट करें।",
+                journey_btn: "भविष्यवाणी इंजन लॉन्च करें",
+                about_mission: "मिशन",
+                about_title: "सटीक कार्डियोलॉजी के युग का नेतृत्व।",
+                about_desc: "CardioAI में, हमारा मानना है कि भविष्य की धड़कन डिजिटल है। नैदानिक विशेषज्ञता को गहन तंत्रिका नेटवर्क के साथ जोड़कर, हम केवल जोखिमों की भविष्यवाणी नहीं कर रहे हैं - हम एक ऐसी दुनिया बना रहे हैं जहां हृदय विफलता अतीत का एक रोकथाम योग्य अवशेष है।",
+                about_privacy: "डेटा गोपनीयता",
+                about_supervision: "AI पर्यवेक्षण"
+            },
+            kn: {
+                nav_features: "ವೈಶಿಷ್ಟ್ಯಗಳು",
+                nav_about: "ನಮ್ಮ ಬಗ್ಗೆ",
+                nav_get_started: "ಪ್ರಾರಂಭಿಸಿ",
+                drop_account: "ನನ್ನ ಖಾತೆ",
+                drop_lang: "ಭಾಷೆ",
+                drop_settings: "ಸೆಟ್ಟಿಂಗ್‌ಗಳು",
+                logout: "ಲಾಗ್ ಔಟ್",
+                hero_title: "ಸ್ಮಾರ್ಟ್ ಹೃದಯ ಆರೋಗ್ಯ ಮೇಲ್ವಿಚಾರಣೆ.",
+                hero_desc: "ನಿಮ್ಮ ಕ್ಲಿನಿಕಲ್ ಡೇಟಾದ ಆಧಾರದ ಮೇಲೆ ಸಂಭಾವ್ಯ ಹೃದಯದ ಅಪಾಯಗಳನ್ನು ಊಹಿಸಲು ಸುಧಾರಿತ AI ಮಾದರಿಗಳನ್ನು ಬಳಸುವುದು.",
+                feat_1_title: "AI ಸಂಶೋಧನೆ",
+                feat_1_desc: "ಸರಳ ಕ್ಲಿನಿಕಲ್ ಮಾದರಿಗಳಿಂದ 40+ ಹೃದಯ ಪರಿಸ್ಥಿತಿಗಳನ್ನು ಪತ್ತೆ ಮಾಡುವ ನರಮಂಡಲದ ವಿಶ್ಲೇಷಣೆ.",
+                feat_2_title: "ಮುನ್ಸೂಚಕ ಹರಿವು",
+                feat_2_desc: "ನಾಳೀಯ ಆರೋಗ್ಯಕ್ಕಾಗಿ 6-ತಿಂಗಳ ಮುನ್ಸೂಚನೆ ಹಾರಿಜಾನ್‌ಗಳನ್ನು ಒದಗಿಸುವ ಸುಧಾರಿತ ರಕ್ತದ ಡೈನಾಮಿಕ್ಸ್ ಸಿಮ್ಯುಲೇಶನ್.",
+                feat_3_title: "ಎಂಟರ್‌ಪ್ರೈಸ್ ಭದ್ರತೆ",
+                feat_3_desc: "ಬಯೋಮೆಟ್ರಿಕ್-ದರ್ಜೆಯ ಮಾನದಂಡಗಳೊಂದಿಗೆ ಎನ್‌ಕ್ರಿಪ್ಟ್ ಮಾಡಲಾದ ವೈಯಕ್ತಿಕ ಆರೋಗ್ಯ ಡೇಟಾ, ನಿಮಗೆ ಮಾತ್ರ ಲಭ್ಯವಿದೆ.",
+                journey_badge: "ಲೈವ್ ವಿಶ್ಲೇಷಣೆ",
+                journey_title: "ನಿಮ್ಮ AI ಪ್ರಯಾಣವನ್ನು ಪ್ರಾರಂಭಿಸಿ.",
+                journey_desc: "ನಮ್ಮ ಮಾದರಿಗಳು ಸಿದ್ಧವಾಗಿವೆ. ಸೆಕೆಂಡುಗಳಲ್ಲಿ ನಿಮ್ಮ ಸ್ವಾಮ್ಯದ ಹೃದಯ ಆರೋಗ್ಯ ಸ್ಕೋರ್ ಅನ್ನು ರಚಿಸಲು ನಿಮ್ಮ ಕ್ಲಿನಿಕಲ್ ಮೆಟ್ರಿಕ್‌ಗಳನ್ನು ಸಂಪರ್ಕಿಸಿ.",
+                journey_btn: "ಮುನ್ಸೂಚನೆ ಎಂಜಿನ್ ಪ್ರಾರಂಭಿಸಿ",
+                about_mission: "ಧ್ಯೇಯ",
+                about_title: "ನಿಖರ ಕಾರ್ಡಿಯಾಲಜಿಯ ಯುಗದ ಪ್ರವರ್ತಕರು.",
+                about_desc: "CardioAI ನಲ್ಲಿ, ಭವಿಷ್ಯದ ಹೃದಯಬಡಿತವು ಡಿಜಿಟಲ್ ಎಂದು ನಾವು ನಂಬುತ್ತೇವೆ. ಕ್ಲಿನಿಕಲ್ ಪರಿಣತಿಯನ್ನು ಆಳವಾದ ನರಮಂಡಲದೊಂದಿಗೆ ಬೆಸೆಯುವ ಮೂಲಕ, ನಾವು ಕೇವಲ ಅಪಾಯಗಳನ್ನು ಊಹಿಸುತ್ತಿಲ್ಲ - ನಾವು ಹೃದ್ರೋಗವು ತಡೆಗಟ್ಟಬಹುದಾದ ಕಲಾಕೃತಿಯಾಗಿರುವ ಜಗತ್ತನ್ನು ಸೃಷ್ಟಿಸುತ್ತಿದ್ದೇವೆ.",
+                about_privacy: "ಡೇಟಾ ಗೌಪ್ಯತೆ",
+                about_supervision: "AI ಮೇಲ್ವಿಚಾರಣೆ"
+            }
+        };
+
+        function changeLanguage(lang) {
+            const t = translations[lang];
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (t[key]) el.innerText = t[key];
+            });
+            document.documentElement.lang = lang;
+        }
+    </script>
+</body>
+
+</html>

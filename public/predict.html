@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CardioAI - Predict</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .bg-custom-black {
+            background-color: #050505;
+        }
+
+        .text-custom-green {
+            color: #00ff88;
+        }
+
+        .border-custom-green {
+            border-color: #00ff88;
+        }
+
+        .bg-custom-green {
+            background-color: #00ff88;
+        }
+
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .glass-panel {
+            background: rgba(10, 10, 10, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+    </style>
+</head>
+
+<body class="bg-custom-black text-white min-h-screen pb-20">
+    <!-- Navbar -->
+    <nav
+        class="flex items-center justify-between px-8 py-4 border-b border-gray-800 sticky top-0 bg-custom-black bg-opacity-80 backdrop-blur-md z-50">
+        <div class="flex items-center space-x-2">
+            <a href="dashboard.html" class="flex items-center space-x-2">
+                <div
+                    class="w-10 h-10 bg-custom-green rounded-lg flex items-center justify-center shadow-[0_0_15px_rgba(0,255,136,0.3)]">
+                    <svg class="w-6 h-6 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z">
+                        </path>
+                    </svg>
+                </div>
+                <span class="text-2xl font-bold tracking-tight">Cardio<span class="text-custom-green">AI</span></span>
+            </a>
+        </div>
+        <div class="flex items-center space-x-6">
+            <a href="dashboard.html" class="text-gray-400 hover:text-custom-green transition-colors"
+                data-i18n="nav_back">Back to Dashboard</a>
+            <div class="flex space-x-2">
+                <button onclick="changeLanguage('en')"
+                    class="text-xs text-gray-500 hover:text-white transition-colors">EN</button>
+                <button onclick="changeLanguage('hi')"
+                    class="text-xs text-gray-500 hover:text-white transition-colors">HI</button>
+                <button onclick="changeLanguage('kn')"
+                    class="text-xs text-gray-500 hover:text-white transition-colors">KN</button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-6xl mx-auto px-6 mt-16">
+        <header class="mb-12">
+            <h1 class="text-4xl font-black mb-4" data-i18n="page_title">Health Prediction <span
+                    class="text-custom-green">Engine</span></h1>
+            <p class="text-gray-400 text-lg" data-i18n="page_desc">Upload your data via CSV or enter clinical metrics
+                manually below.</p>
+        </header>
+
+        <form id="prediction-form" class="space-y-12">
+            <!-- CSV Section -->
+            <section class="glass-panel p-8 rounded-[2.5rem] border-gray-800">
+                <div class="flex items-center space-x-4 mb-6">
+                    <div
+                        class="w-10 h-10 bg-custom-green/10 rounded-xl flex items-center justify-center text-custom-green">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                            </path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-bold" data-i18n="csv_title">Option 1: CSV Upload</h2>
+                        <p class="text-sm text-gray-500" data-i18n="csv_subtitle">Upload a .csv file with clinical rows
+                        </p>
+                    </div>
+                </div>
+                <div
+                    class="relative bg-black/40 border-2 border-dashed border-gray-800 rounded-2xl p-12 text-center group hover:border-custom-green transition-all">
+                    <input type="file" id="csv-file" accept=".csv" class="absolute inset-0 opacity-0 cursor-pointer">
+                    <div class="space-y-2">
+                        <p class="text-gray-400" data-i18n="csv_prompt">Click or drag your CSV file here</p>
+                        <p class="text-xs text-gray-600" id="file-name"></p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Manual Entry Section -->
+            <section class="glass-panel p-8 md:p-12 rounded-[2.5rem] border-gray-800">
+                <div class="flex items-center space-x-4 mb-10">
+                    <div class="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center text-gray-400">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z">
+                            </path>
+                        </svg>
+                    </div>
+                    <h2 class="text-xl font-bold" data-i18n="manual_title">Option 2: Manual Metrics</h2>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- 13 Features -->
+                    <div class="space-y-2">
+                        <label class="text-xs font-bold text-gray-500 uppercase tracking-widest"
+                            data-i18n="feat_age">Age</label>
+                        <input type="text" name="age"
+                            class="w-full bg-[#111] border border-gray-800 rounded-xl px-4 py-3 focus:border-custom-green outline-none transition-all"
+                            placeholder="e.g. 45">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-xs font-bold text-gray-500 uppercase tracking-widest"
+                            data-i18n="feat_sex">Sex</label>
+                        <input type="text" name="sex"
+                            class="w-full bg-[#111] border border-gray-800 rounded-xl px-4 py-3 focus:border-custom-green outline-none transition-all"
+                            placeholder="1 or 0">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-xs font-bold text-gray-500 uppercase tracking-widest"
+                            data-i18n="feat_cp">Chest Pain</label>
+                        <input type="text" name="chest_pain"
+                            class="w-full bg-[#111] border border-gray-800 rounded-xl px-4 py-3 focus:border-custom-green outline-none transition-all"
+                            placeholder="0-3">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-xs font-bold text-gray-500 uppercase tracking-widest"
+                            data-i18n="feat_rbp">Resting Blood Pressure</label>
+                        <input type="text" name="rbp"
+                            class="w-full bg-[#111] border border-gray-800 rounded-xl px-4 py-3 focus:border-custom-green outline-none transition-all"
+                            placeholder="e.g. 120">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-xs font-bold text-gray-500 uppercase tracking-widest"
+                            data-i18n="feat_chol">Cholesterol</label>
+                        <input type="text" name="cholesterol"
+                            class="w-full bg-[#111] border border-gray-800 rounded-xl px-4 py-3 focus:border-custom-green outline-none transition-all"
+                            placeholder="e.g. 233">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-xs font-bold text-gray-500 uppercase tracking-widest"
+                            data-i18n="feat_fbs">Fasting Blood Sugar</label>
+                        <input type="text" name="fbs"
+                            class="w-full bg-[#111] border border-gray-800 rounded-xl px-4 py-3 focus:border-custom-green outline-none transition-all"
+                            placeholder="1 or 0">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-xs font-bold text-gray-500 uppercase tracking-widest"
+                            data-i18n="feat_ecg">Resting Electrocardiogram</label>
+                        <input type="text" name="ecg"
+                            class="w-full bg-[#111] border border-gray-800 rounded-xl px-4 py-3 focus:border-custom-green outline-none transition-all"
+                            placeholder="0-2">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-xs font-bold text-gray-500 uppercase tracking-widest"
+                            data-i18n="feat_maxhr">Thalium Heart Rate Achieved</label>
+                        <input type="text" name="max_hr"
+                            class="w-full bg-[#111] border border-gray-800 rounded-xl px-4 py-3 focus:border-custom-green outline-none transition-all"
+                            placeholder="e.g. 150">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-xs font-bold text-gray-500 uppercase tracking-widest"
+                            data-i18n="feat_angina">Exercise Induced Angina</label>
+                        <input type="text" name="angina"
+                            class="w-full bg-[#111] border border-gray-800 rounded-xl px-4 py-3 focus:border-custom-green outline-none transition-all"
+                            placeholder="1 or 0">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-xs font-bold text-gray-500 uppercase tracking-widest"
+                            data-i18n="feat_oldpeak">Old Peak</label>
+                        <input type="text" name="oldpeak"
+                            class="w-full bg-[#111] border border-gray-800 rounded-xl px-4 py-3 focus:border-custom-green outline-none transition-all"
+                            placeholder="Numeric value">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-xs font-bold text-gray-500 uppercase tracking-widest"
+                            data-i18n="feat_slope">Slope</label>
+                        <input type="text" name="slope"
+                            class="w-full bg-[#111] border border-gray-800 rounded-xl px-4 py-3 focus:border-custom-green outline-none transition-all"
+                            placeholder="Float value">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-xs font-bold text-gray-500 uppercase tracking-widest"
+                            data-i18n="feat_vessels">Coronary Arteries</label>
+                        <input type="text" name="vessels"
+                            class="w-full bg-[#111] border border-gray-800 rounded-xl px-4 py-3 focus:border-custom-green outline-none transition-all"
+                            placeholder="0-3">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-xs font-bold text-gray-500 uppercase tracking-widest"
+                            data-i18n="feat_thal">Thalassemia</label>
+                        <input type="text" name="thal"
+                            class="w-full bg-[#111] border border-gray-800 rounded-xl px-4 py-3 focus:border-custom-green outline-none transition-all"
+                            placeholder="1-3">
+                    </div>
+                </div>
+            </section>
+
+            <div class="flex justify-center pt-8">
+                <button type="submit"
+                    class="bg-custom-green text-black font-black px-20 py-5 rounded-full hover:bg-[#00dd77] transition-all transform hover:scale-105 shadow-[0_0_25px_rgba(0,255,136,0.3)] text-xl"
+                    data-i18n="submit_btn">
+                    Generate Analysis Result
+                </button>
+            </div>
+        </form>
+
+        <!-- Result Modal (Hidden by default) -->
+        <div id="result-modal" class="fixed inset-0 z-[60] flex items-center justify-center p-6 hidden">
+            <div class="absolute inset-0 bg-black/90 backdrop-blur-xl"></div>
+            <div
+                class="relative glass-panel rounded-[3rem] p-10 max-w-2xl w-full border-gray-800 max-h-[90vh] overflow-y-auto">
+                <div class="text-center space-y-6">
+                    <div
+                        class="w-20 h-20 bg-custom-green/20 rounded-full flex items-center justify-center mx-auto text-custom-green">
+                        <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <h2 class="text-3xl font-black" data-i18n="result_title">Analysis Complete</h2>
+                    <p class="text-gray-400 text-lg" id="result-text"></p>
+                    <button onclick="closeResult()"
+                        class="bg-white text-black font-bold px-12 py-4 rounded-full hover:bg-gray-200 transition-all">Close
+                        Result</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const token = localStorage.getItem('token');
+        if (!token) window.location.href = '/index.html';
+
+        let currentLanguage = 'en';
+        let latestPredictionData = null;
+
+        document.getElementById('csv-file').addEventListener('change', function (e) {
+            const fileName = e.target.files[0] ? e.target.files[0].name : '';
+            document.getElementById('file-name').innerText = fileName ? `Selected: ${fileName}` : '';
+        });
+
+        document.getElementById('prediction-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = e.target.querySelector('button[type="submit"]');
+            const originalText = btn.innerText;
+            btn.innerText = 'Analyzing...';
+            btn.disabled = true;
+
+            const formData = new FormData();
+            const csvFile = document.getElementById('csv-file').files[0];
+
+            if (csvFile) {
+                formData.append('csv', csvFile);
+            } else {
+                const manualData = {};
+                new FormData(e.target).forEach((value, key) => {
+                    if (key !== 'csv' && value.trim() !== "") manualData[key] = value;
+                });
+
+                if (Object.keys(manualData).length === 0) {
+                    alert('Please provide either a CSV file or manual metrics.');
+                    btn.innerText = originalText;
+                    btn.disabled = false;
+                    return;
+                }
+                formData.append('manualData', JSON.stringify(manualData));
+            }
+
+            try {
+                const response = await fetch('/api/predict', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: formData
+                });
+
+                const result = await response.json();
+                if (response.ok) {
+                    latestPredictionData = result.predictionData;
+                    updateResultDisplay();
+                    document.getElementById('result-modal').classList.remove('hidden');
+                } else {
+                    alert(result.error || 'Analysis failed.');
+                }
+            } catch (err) {
+                alert('Connection error. Please try again.');
+            } finally {
+                btn.innerText = originalText;
+                btn.disabled = false;
+            }
+        });
+
+        function updateResultDisplay() {
+            if (!latestPredictionData) return;
+            const t = translations[currentLanguage];
+            let html = '';
+
+            if (Array.isArray(latestPredictionData)) {
+                html += `<p class="mb-4 font-bold text-custom-green">${t.processed_rows.replace('{n}', latestPredictionData.length)}</p>`;
+                latestPredictionData.forEach((p, i) => {
+                    const label = p.is_risk ? t.risk_detected : t.healthy;
+                    const factors = p.factors.map(f => t.factors[f] || f).join(', ');
+                    const template = p.is_risk ? t.risk_template : t.healthy_template;
+                    const explanation = template.replace('{factors}', factors);
+                    html += `<div class="mb-6 p-4 bg-white/5 rounded-2xl text-left border border-white/10">
+                        <p class="font-bold text-lg text-white mb-1">${t.person_x.replace('{i}', i + 1)}: <span class="${p.is_risk ? 'text-red-400' : 'text-custom-green'}">${label}</span></p>
+                        <p class="text-xs text-gray-500 mb-2">${t.confidence}: ${(p.probability * 100).toFixed(1)}%</p>
+                        <p class="text-sm text-gray-300 italic">${explanation}</p>
+                    </div>`;
+                });
+            } else {
+                const p = latestPredictionData;
+                const label = p.is_risk ? t.risk_detected : t.healthy;
+                const factors = p.factors.map(f => t.factors[f] || f).join(', ');
+                const template = p.is_risk ? t.risk_template : t.healthy_template;
+                const explanation = template.replace('{factors}', factors);
+
+                html = `<div class="space-y-4">
+                    <p class="text-2xl font-black ${p.is_risk ? 'text-red-400' : 'text-custom-green'}">${label}</p>
+                    <p class="text-gray-400">${t.confidence}: ${(p.probability * 100).toFixed(1)}%</p>
+                    <div class="p-6 bg-white/5 rounded-2xl border border-white/10 text-left">
+                        <p class="text-gray-300 leading-relaxed">${explanation}</p>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-4">${t.consult_text}</p>
+                </div>`;
+            }
+            document.getElementById('result-text').innerHTML = html;
+        }
+
+        function closeResult() {
+            document.getElementById('result-modal').classList.add('hidden');
+        }
+
+        const translations = {
+            en: {
+                nav_back: "Back to Dashboard",
+                page_title: "Health Prediction Engine",
+                page_desc: "Upload your data via CSV or enter clinical metrics manually below.",
+                csv_title: "Option 1: CSV Upload",
+                csv_subtitle: "Upload a .csv file with clinical rows",
+                csv_prompt: "Click or drag your CSV file here",
+                manual_title: "Option 2: Manual Metrics",
+                feat_age: "Age", feat_sex: "Sex", feat_cp: "Chest Pain", feat_rbp: "Resting Blood Pressure",
+                feat_chol: "Cholesterol", feat_fbs: "Fasting Blood Sugar", feat_ecg: "Resting ECG",
+                feat_maxhr: "Max Heart Rate", feat_angina: "Exercise Angina", feat_oldpeak: "Old Peak",
+                feat_slope: "Slope", feat_vessels: "Coronary Arteries", feat_thal: "Thalassemia",
+                submit_btn: "Generate Analysis Result",
+                result_title: "Analysis Complete",
+                risk_detected: "Risk Detected",
+                healthy: "Healthy",
+                confidence: "Confidence",
+                person_x: "Person {i}",
+                processed_rows: "Processed {n} rows.",
+                risk_template: "The main factors for this result are your {factors}.",
+                healthy_template: "This positive result is mainly due to your healthy {factors}.",
+                consult_text: "Please consult a healthcare professional for a detailed evaluation.",
+                factors: {
+                    "Major Coronary Vessels": "Major Coronary Vessels",
+                    "ST depression": "ST depression",
+                    "Thalassemia result": "Thalassemia result",
+                    "Maximum heart rate": "Maximum heart rate",
+                    "Chest pain type": "Chest pain type",
+                    "Exercise-Induced Angina": "Exercise-Induced Angina"
+                }
+            },
+            hi: {
+                nav_back: "डैशबोर्ड पर वापस",
+                page_title: "स्वास्थ्य भविष्यवाणी इंजन",
+                page_desc: "CSV के माध्यम से अपना डेटा अपलोड करें या नीचे मैन्युअल रूप से नैदानिक मेट्रिक्स दर्ज करें।",
+                csv_title: "विकल्प 1: CSV अपलोड",
+                csv_subtitle: "नैदानिक पंक्तियों के साथ .csv फ़ाइल अपलोड करें",
+                csv_prompt: "अपनी CSV फ़ाइल यहां क्लिक करें या खींचें",
+                manual_title: "विकल्प 2: मैन्युअल मेट्रिक्स",
+                feat_age: "आयु", feat_sex: "लिंग", feat_cp: "सीने में दर्द", feat_rbp: "रक्तचाप",
+                feat_chol: "कोलेस्ट्रॉल", feat_fbs: "ब्लड शुगर", feat_ecg: "ईसीजी",
+                feat_maxhr: "अधिकतम हृदय गति", feat_angina: "व्यायाम एनजाइना", feat_oldpeak: "ओल्ड पीक",
+                feat_slope: "ढलान", feat_vessels: "कोरोनरी धमनियां", feat_thal: "थैलेसीमिया",
+                submit_btn: "विश्लेषण परिणाम उत्पन्न करें",
+                result_title: "विश्लेषण पूर्ण",
+                risk_detected: "जोखिम पाया गया",
+                healthy: "स्वस्थ",
+                confidence: "आत्मविश्वास",
+                person_x: "व्यक्ति {i}",
+                processed_rows: "{n} पंक्तियाँ संसाधित की गईं।",
+                risk_template: "इस परिणाम के मुख्य कारक आपकी {factors} हैं।",
+                healthy_template: "यह सकारात्मक परिणाम मुख्य रूप से आपके स्वस्थ {factors} के कारण है।",
+                consult_text: "विस्तृत मूल्यांकन के लिए कृपया किसी स्वास्थ्य देखभाल पेशेवर से परामर्श लें।",
+                factors: {
+                    "Major Coronary Vessels": "प्रमुख कोरोनरी वाहिकाएं",
+                    "ST depression": "एसटी अवसाद",
+                    "Thalassemia result": "थैलेसीमिया परिणाम",
+                    "Maximum heart rate": "अधिकतम हृदय गति",
+                    "Chest pain type": "सीने में दर्द का प्रकार",
+                    "Exercise-Induced Angina": "व्यायाम-प्रेरित एनजाइना"
+                }
+            },
+            kn: {
+                nav_back: "ಡ್ಯಾಶ್‌ಬೋರ್ಡ್‌ಗೆ ಹಿಂತಿರುಗಿ",
+                page_title: "ಆರೋಗ್ಯ ಮುನ್ಸೂಚನೆ ಎಂಜಿನ್",
+                page_desc: "CSV ಮೂಲಕ ನಿಮ್ಮ ಡೇಟಾವನ್ನು ಅಪ್‌ಲೋಡ್ ಮಾಡಿ ಅಥವಾ ಕೆಳಗೆ ಹಸ್ತಚಾಲಿತವಾಗಿ ಮೆಟ್ರಿಕ್‌ಗಳನ್ನು ನಮೂದಿಸಿ.",
+                csv_title: "ಆಯ್ಕೆ 1: CSV ಅಪ್‌ಲೋಡ್",
+                csv_subtitle: ".csv ಫೈಲ್ ಅನ್ನು ಅಪ್‌ಲೋಡ್ ಮಾಡಿ",
+                csv_prompt: "ನಿಮ್ಮ CSV ಫೈಲ್ ಅನ್ನು ಇಲ್ಲಿ ಕ್ಲಿಕ್ ಮಾಡಿ ಅಥವಾ ಎಳೆಯಿರಿ",
+                manual_title: "ಆಯ್ಕೆ 2: ಹಸ್ತಚಾಲಿತ ಮೆಟ್ರಿಕ್‌ಗಳು",
+                feat_age: "ವಯಸ್ಸು", feat_sex: "ಲಿಂಗ", feat_cp: "ಎದೆ ನೋವು", feat_rbp: "ರಕ್ತದೊತ್ತಡ",
+                feat_chol: "ಕೊಲೆಸ್ಟ್ರಾಲ್", feat_fbs: "ರಕ್ತದ ಸಕ್ಕರೆ", feat_ecg: "ಇಸಿಜಿ",
+                feat_maxhr: "ಗರಿಷ್ಠ ಹೃದಯ ಬಡಿತ", feat_angina: "ವ್ಯಾಯಾಮದ ಆಂಜಿನಾ", feat_oldpeak: "ಓಲ್ಡ್ ಪೀಕ್",
+                feat_slope: "ಇಳಿಜಾರು", feat_vessels: "ಪರಿಧಮನಿಯ ಅಪಧಮನಿಗಳು", feat_thal: "ಥಲಸೇಮಿಯಾ",
+                submit_btn: "ವಿಶ್ಲೇಷಣಾ ಫಲಿತಾಂಶವನ್ನು ಪಡೆಯಿರಿ",
+                result_title: "ವಿಶ್ಲೇಷಣೆ ಪೂರ್ಣಗೊಂಡಿದೆ",
+                risk_detected: "ಅಪಾಯ ಪತ್ತೆಯಾಗಿದೆ",
+                healthy: "ಆರೋಗ್ಯವಂತ",
+                confidence: "ನಂಬಿಕೆ",
+                person_x: "ವ್ಯಕ್ತಿ {i}",
+                processed_rows: "{n} ಸಾಲುಗಳನ್ನು ಸಂಸ್ಕರಿಸಲಾಗಿದೆ.",
+                risk_template: "ಈ ಫಲಿತಾಂಶಕ್ಕೆ ಮುಖ್ಯ ಕಾರಣಗಳು ನಿಮ್ಮ {factors}.",
+                healthy_template: "ಈ ಧನಾತ್ಮಕ ಫಲಿತಾಂಶಕ್ಕೆ ಮುಖ್ಯ ಕಾರಣ ನಿಮ್ಮ ಆರೋಗ್ಯಕರ {factors}.",
+                consult_text: "ವಿವರವಾದ ಮೌಲ್ಯಮಾಪನಕ್ಕಾಗಿ ದಯವಿಟ್ಟು ಆರೋಗ್ಯ ವೃತ್ತಿಪರರನ್ನು ಸಂಪರ್ಕಿಸಿ.",
+                factors: {
+                    "Major Coronary Vessels": "ಪ್ರಮುಖ ಪರಿಧಮನಿಯ ನಾಳಗಳು",
+                    "ST depression": "ST ಕುಸಿತ",
+                    "Thalassemia result": "ಥಲಸೇಮಿಯಾ ಫಲಿತಾಂಶ",
+                    "Maximum heart rate": "ಗರಿಷ್ಠ ಹೃದಯ ಬಡಿತ",
+                    "Chest pain type": "ಎದೆ ನೋವಿನ ವಿಧ",
+                    "Exercise-Induced Angina": "ವ್ಯಾಯಾಮ-ಪ್ರೇರಿತ ಆಂಜಿನಾ"
+                }
+            }
+        };
+
+        function changeLanguage(lang) {
+            currentLanguage = lang;
+            const t = translations[lang];
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (t[key]) el.innerText = t[key];
+            });
+            document.documentElement.lang = lang;
+            updateResultDisplay();
+        }
+    </script>
+</body>
+
+</html>
